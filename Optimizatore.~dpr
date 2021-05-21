@@ -10,7 +10,8 @@ uses
   secnew in 'secnew.pas' {Form6},
   help in 'help.pas' {Form7},
   print in 'print.pas' {Form8},
-  drillchange in 'drillchange.pas' {Form9};
+  drillchange in 'drillchange.pas' {Form9},
+  temp in 'temp.pas' {Form10};
 
 {$R *.res}
 
@@ -25,5 +26,6 @@ begin
   Application.CreateForm(TForm7, Form7);
   Application.CreateForm(TForm8, Form8);
   Application.CreateForm(TForm9, Form9);
+  Application.CreateForm(TForm10, Form10);
   Application.Run;
 end.
