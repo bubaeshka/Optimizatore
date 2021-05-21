@@ -1,0 +1,64 @@
+
+--------------------------------2019/1/29 11:48:29--------------------------------
+FastMM has detected an attempt to call a virtual method on a freed object. An access violation will now be raised in order to abort the current operation.
+
+Virtual method: Destroy
+
+The allocation number was: 6571
+
+The object was allocated by thread 0x2414, and the stack trace (return addresses) at the time was:
+4029B3 [System][System][@GetMem]
+403AC3 [System][System][TObject.NewInstance]
+403E8A [System][System][@ClassCreate]
+403AF8 [System][System][TObject.Create]
+43059F [Contnrs][Contnrs][TObjectList.GetItem]
+4775BB [main.pas][main][TBtl.optimize][836]
+478474 [main.pas][main][TForm1.N8Click][1022]
+4784F7 [main.pas][main][TForm1.Button3Click][1029]
+453E56 [Controls][Controls][TControl.Click]
+44BDF1 [StdCtrls][StdCtrls][TButton.Click]
+44BEE5 [StdCtrls][StdCtrls][TButton.CNCommand]
+
+The object was subsequently freed by thread 0x2414, and the stack trace (return addresses) at the time was:
+4029D3 [System][System][@FreeMem]
+403AE1 [System][System][TObject.FreeInstance]
+403ED5 [System][System][@ClassDestroy]
+403B1A [System][System][TObject.Destroy]
+403B27 [System][System][TObject.Free]
+47786B [main.pas][main][TBtl.optimize][862]
+478474 [main.pas][main][TForm1.N8Click][1022]
+4784F7 [main.pas][main][TForm1.Button3Click][1029]
+453E56 [Controls][Controls][TControl.Click]
+44BDF1 [StdCtrls][StdCtrls][TButton.Click]
+44BEE5 [StdCtrls][StdCtrls][TButton.CNCommand]
+
+The current thread ID is 0x2414, and the stack trace (return addresses) leading to this error is:
+4305C7 [Contnrs][Contnrs][TObjectList.Notify]
+41D698 [Classes][Classes][TList.Delete]
+41D9A8 [Classes][Classes][TList.SetCount]
+41D630 [Classes][Classes][TList.Clear]
+41D5E2 [Classes][Classes][TList.Destroy]
+403B27 [System][System][TObject.Free]
+477879 [main.pas][main][TBtl.optimize][863]
+478474 [main.pas][main][TForm1.N8Click][1022]
+4784F7 [main.pas][main][TForm1.Button3Click][1029]
+453E56 [Controls][Controls][TControl.Click]
+44BDF1 [StdCtrls][StdCtrls][TButton.Click]
+
+Current memory dump of 256 bytes starting at pointer address 7EFA6900:
+8C EC 47 00 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 AF 6E EE 7A 80 80 80 80
+80 80 80 80 80 80 80 80 00 00 00 00 A0 18 FA 7E 00 00 00 00 00 00 00 00 9C 9A 40 00 00 00 00 00
+26 02 00 00 B3 29 40 00 C3 3A 40 00 8A 3E 40 00 9A 90 42 00 02 43 B6 77 AD 9B 42 00 7E 85 43 00
+C4 19 42 00 F5 1B 42 00 FD 2F 42 00 A2 1E 42 00 14 24 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 24 00 00 00 00 00 00 00 49 46 83 F9 64 79 42 00 00 00 00 00 3C A4 42 00 70 E4 F6 7E
+80 C0 F8 7E A8 E4 F6 7E 08 00 00 FF 60 00 00 00 00 00 00 00 B6 B9 7C 06 00 00 00 00 A0 18 FA 7E
+00 00 00 00 00 00 00 00 9C 9A 40 00 00 00 00 00 27 02 00 00 B3 29 40 00 C3 3A 40 00 8A 3E 40 00
+å  Ï  G  .  Ä  Ä  Ä  Ä  Ä  Ä  Ä  Ä  Ä  Ä  Ä  Ä  Ä  Ä  Ä  Ä  Ä  Ä  Ä  Ä  Ø  n  Ó  z  Ä  Ä  Ä  Ä
+Ä  Ä  Ä  Ä  Ä  Ä  Ä  Ä  .  .  .  .  †  .  ˙  ~  .  .  .  .  .  .  .  .  ú  ö  @  .  .  .  .  .
+&  .  .  .  ≥  )  @  .  √  :  @  .  ä  >  @  .  ö  ê  B  .  .  C  ∂  w  ≠  õ  B  .  ~  Ö  C  .
+ƒ  .  B  .  ı  .  B  .  ˝  /  B  .  ¢  .  B  .  .  $  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+.  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+.  .  .  .  $  .  .  .  .  .  .  .  I  F  É  ˘  d  y  B  .  .  .  .  .  <  §  B  .  p  ‰  ˆ  ~
+Ä  ¿  ¯  ~  ®  ‰  ˆ  ~  .  .  .  ˇ  `  .  .  .  .  .  .  .  ∂  π  |  .  .  .  .  .  †  .  ˙  ~
+.  .  .  .  .  .  .  .  ú  ö  @  .  .  .  .  .  '  .  .  .  ≥  )  @  .  √  :  @  .  ä  >  @  .

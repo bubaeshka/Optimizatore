@@ -1,0 +1,104 @@
+unit secnew;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, StdCtrls, Buttons;
+
+type
+  TForm6 = class(TForm)
+    Edit1: TEdit;
+    Button1: TButton;
+    Button2: TButton;
+    Label1: TLabel;
+    BitBtn1: TBitBtn;
+    BitBtn2: TBitBtn;
+    Label2: TLabel;
+    Label3: TLabel;
+    Label4: TLabel;
+    Label5: TLabel;
+    Button3: TButton;
+    procedure Button2Click(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
+    procedure BitBtn2Click(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure BitBtn1Click(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  Form6: TForm6;
+  index:integer;
+
+implementation
+
+uses main;
+
+{$R *.dfm}
+
+procedure TForm6.Button2Click(Sender: TObject);
+begin
+  Form6.Close;
+end;
+
+procedure TForm6.Button1Click(Sender: TObject);
+var cc:integer;
+begin
+  cc:=-1;
+  if assigned(btl) then if assigned(btl.progs) then
+  if TProgs(btl.progs[index-1]).obrs.Count>0 then
+  if TryStrToInt(edit1.Text,cc) then
+  begin
+    if cc>0 then TProgs(Btl.progs[index-1]).newh(cc);
+  end;
+end;
+
+procedure TForm6.BitBtn2Click(Sender: TObject);
+begin
+  if index<btl.progs.Count then index:=index+1;
+  if index=btl.progs.Count then BitBtn2.Enabled:=false;
+  if index>=1 then BitBtn1.Enabled:=true;
+  Label3.Caption:=inttostr(index);
+  Label4.Caption:=floattostr(TProgs(Btl.progs[index-1]).h/10);
+end;
+
+procedure TForm6.FormShow(Sender: TObject);
+begin
+  index:=1;
+  if assigned(Btl) then if assigned(btl.progs) then if btl.progs.Count>0 then
+  begin
+    if btl.progs.Count>1 then bitbtn2.Enabled:=true;
+    Label3.Caption:=inttostr(index);
+    Label4.Caption:=floattostr(TProgs(Btl.progs[index-1]).h/10);
+  end;
+end;
+
+procedure TForm6.BitBtn1Click(Sender: TObject);
+begin
+  if index>1 then index:=index-1;
+  if index=1 then BitBtn1.Enabled:=false;
+  if index<=btl.progs.Count then BitBtn2.Enabled:=true;
+  Label3.Caption:=inttostr(index);
+  Label4.Caption:=floattostr(TProgs(Btl.progs[index-1]).h/10);
+end;
+
+procedure TForm6.Button3Click(Sender: TObject);
+var cc,i:integer;
+begin
+  cc:=-1;
+  if assigned(btl) then if assigned(btl.progs) then
+  if TProgs(btl.progs[index-1]).obrs.Count>0 then
+  if TryStrToInt(edit1.Text,cc) then
+  begin
+    if cc>0 then for i:=0 to Btl.progs.Count-1 do
+      TProgs(Btl.progs[i]).newh(cc);
+    showmessage('операции пересчитаны');  
+  end;
+end;
+
+end.
