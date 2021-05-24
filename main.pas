@@ -197,7 +197,7 @@ uses prosmotr, BTLheader, addlong, saveX, secnew, help, print, drillchange;
 /////////////TProgs/////////////////////////////////////////////
 ////уменьшает глубину всех сверлений до значения параметра
 function Tprogs.reducedrill(newdepth:integer):boolean;
-var recalc,recalcop:boolean;
+var recalc,recalcop,recalcopp:boolean;
     i:integer;
 begin
   Result:=false;
@@ -209,6 +209,7 @@ begin
     for i:=0 to obrs.Count-1 do begin
       //операция не пересчитывалась
       recalcop:=false;
+      recalcopp:=false;
       //сверление, drilling по стороне 3 или стороне 1, с углами 90°
       //и глубиной более newdepth
       if (Tobrs(obrs[i]).opkey=40) and ((Tobrs(obrs[i]).opgr=3) or
@@ -218,12 +219,14 @@ begin
       (Tobrs(obrs[i]).p[11]>(newdepth*10)) then begin
          Tobrs(obrs[i]).p[11]:=newdepth*10;
          //если сторона сверления 1, то меняем её на 3
-         if Tobrs(obrs[i]).side=1 then Tobrs(obrs[i]).side:=3;
+         if Tobrs(obrs[i]).side=1 then begin
+           Tobrs(obrs[i]).side:=3;
+           recalcopp:=true;
+         end;
          recalcop:=true;
       end;
-
-
       if recalcop then begin recalc:=true; Tobrs(obrs[i]).newparam; end;
+      if recalcopp then begin recalc:=true; Tobrs(obrs[i]).newopparam; end;
     end;
     if recalc then begin Result:=true; reprog; end;
   end;
