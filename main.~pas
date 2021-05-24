@@ -1948,7 +1948,7 @@ begin
       for i:=0 to Btl.progs.Count-1 do begin
         pr_count:=pr_count+TProgs(Btl.progs[i]).removebadcut;
       end;
-      ShowMessage('удалено '+inttostr(pr_count)+' операций в '+inttostr(Btl.progs.Count-1)+' программах');
+      ShowMessage('удалено '+inttostr(pr_count)+' операций в '+inttostr(Btl.progs.Count)+' программах');
   end;
 end;
 

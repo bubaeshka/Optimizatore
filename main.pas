@@ -217,8 +217,12 @@ begin
       ((Tobrs(obrs[i]).side=3) or (Tobrs(obrs[i]).side=1)) and
       (Tobrs(obrs[i]).p[11]>(newdepth*10)) then begin
          Tobrs(obrs[i]).p[11]:=newdepth*10;
+         //если сторона сверления 1, то меняем её на 3
+         if Tobrs(obrs[i]).side=1 then Tobrs(obrs[i]).side:=3;
          recalcop:=true;
       end;
+
+
       if recalcop then begin recalc:=true; Tobrs(obrs[i]).newparam; end;
     end;
     if recalc then begin Result:=true; reprog; end;
