@@ -56,6 +56,8 @@ type
     N24: TMenuItem;
     N25: TMenuItem;
     N26: TMenuItem;
+    N27: TMenuItem;
+    N28: TMenuItem;
     procedure N3Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure N2Click(Sender: TObject);
@@ -91,6 +93,9 @@ type
     procedure N23Click(Sender: TObject);
     procedure N25Click(Sender: TObject);
     procedure N26Click(Sender: TObject);
+    procedure perestavka(cases:byte;polubrus:boolean);
+    procedure N27Click(Sender: TObject);
+    procedure N28Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -109,13 +114,14 @@ type
     optilong:integer;   //длинна заготовки
     h:integer;          //высота бруса
     sh:integer;         //ширина бруса
+    sorted:boolean;     //признак отсортированности операций
     obrs:TObjectList;   //список обработок
     procedure newh(nn:extended); //задаёт новую высоту бруса
     procedure reprog;   //обновляет текст программы копирую его из обработок
     //переставляет местами резку чашек сначала бок, потом верх
     procedure perestanovka;
     //переставляет местами резку чашек кадворк
-    function perestanovkaCadWork(aaax:byte):integer;
+    function perestanovkaCadWork(aaax:byte;bbbx:boolean):integer;
     //меняет сторону отпиливания с 1 на 3
     procedure changesidecut;
     //уменьшает глубину всех сверлений до значения параметра
@@ -557,8 +563,10 @@ begin
       if recalcop then  TObrs(obrs[i]).newopparam;
       if recalc then TObrs(obrs[i]).newparam;
     end;
-    //хотя бы одна операция пересчитываласьж
+    //хотя бы одна операция пересчитывалась
     obrs.Sort(sortlist8);
+    //устанавливаем признак отсортированности операций
+    sorted:=true;
     reprog;
   end;
 end;
@@ -618,13 +626,15 @@ begin
   end;
 end;
 
-function TProgs.perestanovkaCadWork(aaax:byte):integer;
+function TProgs.perestanovkaCadWork(aaax:byte;bbbx:boolean):integer;
 var i,j:integer;
+    findch:boolean;
 begin
   if assigned(obrs) then begin //проверка существования операций в программе
     Result:=0;
     for i:=0 to obrs.Count-1 do begin //перебираем операции
-        //если номер операции 30, группы 3 или 4
+      findch:=false;
+      //если номер операции 30, группы 3 или 4
       if (TObrs(obrs[i]).opkey=30) and
       ((TObrs(obrs[i]).opgr=3) or (TObrs(obrs[i]).opgr=4)) then
         //проверяем следующую операцию если она есть
@@ -635,13 +645,19 @@ begin
             if (i+2)<(obrs.Count-1) then
               if (TObrs(obrs[i+2]).opkey=30) and
               ((TObrs(obrs[i+2]).opgr=3) or (TObrs(obrs[i+2]).opgr=4)) then
-                if (i+3)<(obrs.Count-1) then
-                  if (TObrs(obrs[i+3]).opkey=30) and
-                  ((TObrs(obrs[i+3]).opgr=3) or (TObrs(obrs[i+3]).opgr=4)) then
-                    //чашка нашлась
+                if not bbbx then begin
+                  if ((i+3)<(obrs.Count-1)) then
+                    if (TObrs(obrs[i+3]).opkey=30) and
+                      ((TObrs(obrs[i+3]).opgr=3) or (TObrs(obrs[i+3]).opgr=4)) then
+                       //чашка нашлась
+                       findch:=true;
+                  end else findch:=true;
+      if findch then
             //дополнительное условие если чашки идут подряд
-            if (TObrs(obrs[i+1]).p[1]=TObrs(obrs[i+2]).p[1]) and
-            (TObrs(obrs[i+2]).p[1]=TObrs(obrs[i+3]).p[1]) then
+            if ((TObrs(obrs[i+1]).p[1]=TObrs(obrs[i+2]).p[1]) and
+            (TObrs(obrs[i+2]).p[1]=TObrs(obrs[i+3]).p[1])) or (bbbx and
+            (TObrs(obrs[i+1]).p[1]=TObrs(obrs[i+2]).p[1]))
+             then
     begin
       //находим в чашке 1 сторону и ставим её на первое место.
       if aaax=1 then begin
@@ -751,6 +767,7 @@ begin
         repeat
           if pos('BT',s)=1 then begin  //мы нашли номер программы
             prog:=TProgs.Create;       //создаём объект программы
+            prog.sorted:=false;        //операции программы не отсортированы 
             prog.data:=TStringList.Create; //создаём список текста программы
             s1:=s;      //теперь работаем с s1
             oprt:=0;    //список операций = 0
@@ -1902,15 +1919,8 @@ begin
 end;
 
 procedure TForm1.N19Click(Sender: TObject);
-var i,zy:integer;
 begin
-  if assigned(Btl) then if assigned(btl.progs) then if btl.progs.Count>0 then
-  begin
-    zy:=0;
-    for i:=0 to btl.progs.Count-1 do
-      zy:=zy+TProgs(btl.progs[i]).perestanovkaCadWork(1);
-    ShowMessage('перестановка выполнена успешно! Пересчитано чашек '+inttostr(zy));
-  end;
+  perestavka(1,false);
 end;
 
 procedure TForm1.N21Click(Sender: TObject);
@@ -1934,16 +1944,8 @@ begin
 end;
 
 procedure TForm1.N25Click(Sender: TObject);
-var i,zy:integer;
 begin
-  if assigned(Btl) then if assigned(btl.progs) then if btl.progs.Count>0 then
-  begin
-    zy:=0;
-    for i:=0 to btl.progs.Count-1 do
-      zy:=zy+TProgs(btl.progs[i]).perestanovkaCadWork(2);
-    ShowMessage('перестановка выполнена успешно! Пересчитано чашек '+inttostr(zy));
-  end;
-
+  perestavka(2,false);
 end;
 
 procedure TForm1.N26Click(Sender: TObject);
@@ -1957,6 +1959,46 @@ begin
       end;
       ShowMessage('удалено '+inttostr(pr_count)+' операций в '+inttostr(Btl.progs.Count)+' программах');
   end;
+end;
+
+procedure TForm1.perestavka(cases:byte;polubrus:boolean);
+var i,zy:integer;
+    uopok,uopcancel:boolean; //упорядочивать ли операции?
+begin
+  if assigned(Btl) then if assigned(btl.progs) then if btl.progs.Count>0 then
+  begin
+    zy:=0;
+    uopok:=false;
+    uopcancel:=false;
+    for i:=0 to btl.progs.Count-1 do begin
+      //текущая программа отсортирована?
+      if not TProgs(btl.progs[i]).sorted then
+        //если не отсортирована, пользователь сказал сортировать?
+        //если сказал, то сортируем
+        if uopok then TProgs(btl.progs[i]).changesidecut else
+          //если не сказал сортировать выдаём запрос на сортировку, если запрос не отменён
+          if not uopcancel then
+            case messagebox(self.Handle,PChar('Стало известно что, операции не упорядочены, упорядочить?'),
+                 PChar('Вы уверены?'),MB_OKCANCEL) of
+              IDOK: begin TProgs(btl.progs[i]).changesidecut; uopok:=true; end;
+              IDCANCEL: uopcancel:=true;
+            end;
+      //меняем местами чашки, подсчитываем количество изменений.
+      zy:=zy+TProgs(btl.progs[i]).perestanovkaCadWork(cases,polubrus);
+    end;
+    ShowMessage('перестановка выполнена успешно! Пересчитано чашек '+inttostr(zy));
+  end;
+
+end;
+
+procedure TForm1.N27Click(Sender: TObject);
+begin
+  perestavka(1,true);
+end;
+
+procedure TForm1.N28Click(Sender: TObject);
+begin
+  perestavka(2,true);
 end;
 
 end.
