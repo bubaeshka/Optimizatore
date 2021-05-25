@@ -58,6 +58,7 @@ type
     N26: TMenuItem;
     N27: TMenuItem;
     N28: TMenuItem;
+    CheckBox1: TCheckBox;
     procedure N3Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure N2Click(Sender: TObject);
@@ -96,6 +97,7 @@ type
     procedure perestavka(cases:byte;polubrus:boolean);
     procedure N27Click(Sender: TObject);
     procedure N28Click(Sender: TObject);
+    procedure CheckBox1Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -628,11 +630,13 @@ end;
 
 function TProgs.perestanovkaCadWork(aaax:byte;bbbx:boolean):integer;
 var i,j:integer;
+    findch:boolean;
 begin
   if assigned(obrs) then begin //проверка существования операций в программе
     Result:=0;
     for i:=0 to obrs.Count-1 do begin //перебираем операции
-        //если номер операции 30, группы 3 или 4
+      findch:=false;
+      //если номер операции 30, группы 3 или 4
       if (TObrs(obrs[i]).opkey=30) and
       ((TObrs(obrs[i]).opgr=3) or (TObrs(obrs[i]).opgr=4)) then
         //проверяем следующую операцию если она есть
@@ -643,10 +647,14 @@ begin
             if (i+2)<(obrs.Count-1) then
               if (TObrs(obrs[i+2]).opkey=30) and
               ((TObrs(obrs[i+2]).opgr=3) or (TObrs(obrs[i+2]).opgr=4)) then
-                if (not bbbx) and ((i+3)<(obrs.Count-1)) then
-                  if (TObrs(obrs[i+3]).opkey=30) and
-                  ((TObrs(obrs[i+3]).opgr=3) or (TObrs(obrs[i+3]).opgr=4)) then
-                    //чашка нашлась
+                if not bbbx then begin
+                  if ((i+3)<(obrs.Count-1)) then
+                    if (TObrs(obrs[i+3]).opkey=30) and
+                      ((TObrs(obrs[i+3]).opgr=3) or (TObrs(obrs[i+3]).opgr=4)) then
+                       //чашка нашлась
+                       findch:=true;
+                  end else findch:=true;
+      if findch then
             //дополнительное условие если чашки идут подряд
             if ((TObrs(obrs[i+1]).p[1]=TObrs(obrs[i+2]).p[1]) and
             (TObrs(obrs[i+2]).p[1]=TObrs(obrs[i+3]).p[1])) or (bbbx and
@@ -1993,6 +2001,18 @@ end;
 procedure TForm1.N28Click(Sender: TObject);
 begin
   perestavka(2,true);
+end;
+
+procedure TForm1.CheckBox1Click(Sender: TObject);
+var i:integer;
+begin
+  if CheckBox1.Checked then begin
+      for i:=0 to ListView2.Items.Count-1 do
+         ListView2.Items[i].Checked:=true;
+    end else begin
+      for i:=0 to ListView2.Items.Count-1 do
+        ListView2.Items[i].Checked:=false;
+  end;
 end;
 
 end.

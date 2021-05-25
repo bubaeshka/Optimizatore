@@ -58,6 +58,7 @@ type
     N26: TMenuItem;
     N27: TMenuItem;
     N28: TMenuItem;
+    CheckBox1: TCheckBox;
     procedure N3Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure N2Click(Sender: TObject);
@@ -96,6 +97,7 @@ type
     procedure perestavka(cases:byte;polubrus:boolean);
     procedure N27Click(Sender: TObject);
     procedure N28Click(Sender: TObject);
+    procedure CheckBox1Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -662,32 +664,32 @@ begin
       //находим в чашке 1 сторону и ставим её на первое место.
       if aaax=1 then begin
         for j:=0 to 3 do
-           if Tobrs(obrs[i+j]).side=3 then              //3
+           if (Tobrs(obrs[i+j]).side=3) and (Tobrs(obrs[i+j]).opkey=30) then              //3
              obrs.Exchange(i,i+j);
         for j:=0 to 3 do
-           if Tobrs(obrs[i+j]).side=1 then              //1
+           if (Tobrs(obrs[i+j]).side=1) and (Tobrs(obrs[i+j]).opkey=30) then              //1
              obrs.Exchange(i+1,i+j);
         for j:=0 to 3 do
-           if Tobrs(obrs[i+j]).side=2 then              //2
+           if (Tobrs(obrs[i+j]).side=2) and (Tobrs(obrs[i+j]).opkey=30) then              //2
              obrs.Exchange(i+2,i+j);
         for j:=0 to 3 do
-           if Tobrs(obrs[i+j]).side=4 then              //4
+           if (Tobrs(obrs[i+j]).side=4) and (Tobrs(obrs[i+j]).opkey=30) then              //4
              obrs.Exchange(i+3,i+j);
         reprog;
         inc(Result);
       end;
       if aaax=2 then begin
         for j:=0 to 3 do
-           if Tobrs(obrs[i+j]).side=2 then              //3
+           if (Tobrs(obrs[i+j]).side=2) and (Tobrs(obrs[i+j]).opkey=30) then              //3
              obrs.Exchange(i,i+j);
         for j:=0 to 3 do
-           if Tobrs(obrs[i+j]).side=4 then              //1
+           if (Tobrs(obrs[i+j]).side=4) and (Tobrs(obrs[i+j]).opkey=30) then              //1
              obrs.Exchange(i+1,i+j);
         for j:=0 to 3 do
-           if Tobrs(obrs[i+j]).side=3 then              //2
+           if (Tobrs(obrs[i+j]).side=3) and (Tobrs(obrs[i+j]).opkey=30) then              //2
              obrs.Exchange(i+2,i+j);
         for j:=0 to 3 do
-           if Tobrs(obrs[i+j]).side=1 then              //4
+           if (Tobrs(obrs[i+j]).side=1) and (Tobrs(obrs[i+j]).opkey=30) then              //4
              obrs.Exchange(i+3,i+j);
         reprog;
         inc(Result);
@@ -1999,6 +2001,18 @@ end;
 procedure TForm1.N28Click(Sender: TObject);
 begin
   perestavka(2,true);
+end;
+
+procedure TForm1.CheckBox1Click(Sender: TObject);
+var i:integer;
+begin
+  if CheckBox1.Checked then begin
+      for i:=0 to ListView2.Items.Count-1 do
+         ListView2.Items[i].Checked:=true;
+    end else begin
+      for i:=0 to ListView2.Items.Count-1 do
+        ListView2.Items[i].Checked:=false;
+  end;
 end;
 
 end.

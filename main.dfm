@@ -170,6 +170,15 @@ object Form1: TForm1
       Visible = False
       OnKeyPress = Edit1KeyPress
     end
+    object CheckBox1: TCheckBox
+      Left = 200
+      Top = 160
+      Width = 97
+      Height = 17
+      Caption = #1042#1099#1073#1088#1072#1090#1100' '#1074#1089#1077
+      TabOrder = 5
+      OnClick = CheckBox1Click
+    end
   end
   object Button1: TButton
     Left = 472
