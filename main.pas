@@ -59,6 +59,7 @@ type
     N27: TMenuItem;
     N28: TMenuItem;
     CheckBox1: TCheckBox;
+    N29: TMenuItem;
     procedure N3Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure N2Click(Sender: TObject);
@@ -98,6 +99,7 @@ type
     procedure N27Click(Sender: TObject);
     procedure N28Click(Sender: TObject);
     procedure CheckBox1Click(Sender: TObject);
+    procedure N29Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -164,6 +166,8 @@ type
     procedure optimize(a:TObjectList;rez:integer);
     //процедура частичного сохранения
     procedure writeXprog(ax:integer;filename:TFileName);
+    //процедура разбора файла, аналогичная конструктору для добавления файла. 
+    procedure load(filename:TFileName);
   end;
 
   //класс процедуры оптимизации
@@ -629,12 +633,15 @@ begin
 end;
 
 function TProgs.perestanovkaCadWork(aaax:byte;bbbx:boolean):integer;
-var i,j:integer;
-    findch:boolean;
+var i,j,k,excl:integer;
+    findch,half:boolean;
 begin
   if assigned(obrs) then begin //проверка существования операций в программе
     Result:=0;
-    for i:=0 to obrs.Count-1 do begin //перебираем операции
+    i:=-1;
+//    for i:=0 to obrs.Count-1 do begin //перебираем операции
+    while i<(obrs.Count-1) do begin
+      i:=i+1;
       findch:=false;
       //если номер операции 30, группы 3 или 4
       if (TObrs(obrs[i]).opkey=30) and
@@ -661,38 +668,44 @@ begin
             (TObrs(obrs[i+1]).p[1]=TObrs(obrs[i+2]).p[1]))
              then
     begin
+      //проверка на получашку
+      k:=0;
+      excl:=0;
+      for j:=0 to 3 do if Tobrs(obrs[i+j]).opkey=30 then k:=k+1 else excl:=Tobrs(obrs[i+j]).side;
       //находим в чашке 1 сторону и ставим её на первое место.
       if aaax=1 then begin
         for j:=0 to 3 do
-           if (Tobrs(obrs[i+j]).side=3) and (Tobrs(obrs[i+j]).opkey=30) then              //3
+           if (Tobrs(obrs[i+j]).side=3) and (Tobrs(obrs[i+j]).opkey=30) and (Tobrs(obrs[i]).opkey=30)   and (excl<>3) then  //3
              obrs.Exchange(i,i+j);
         for j:=0 to 3 do
-           if (Tobrs(obrs[i+j]).side=1) and (Tobrs(obrs[i+j]).opkey=30) then              //1
+           if (Tobrs(obrs[i+j]).side=1) and (Tobrs(obrs[i+j]).opkey=30) and (Tobrs(obrs[i+1]).opkey=30) and (excl<>1) then  //1
              obrs.Exchange(i+1,i+j);
         for j:=0 to 3 do
-           if (Tobrs(obrs[i+j]).side=2) and (Tobrs(obrs[i+j]).opkey=30) then              //2
+           if (Tobrs(obrs[i+j]).side=2) and (Tobrs(obrs[i+j]).opkey=30) and (Tobrs(obrs[i+2]).opkey=30) and (excl<>2) then  //2
              obrs.Exchange(i+2,i+j);
         for j:=0 to 3 do
-           if (Tobrs(obrs[i+j]).side=4) and (Tobrs(obrs[i+j]).opkey=30) then              //4
+           if (Tobrs(obrs[i+j]).side=4) and (Tobrs(obrs[i+j]).opkey=30) and (Tobrs(obrs[i+3]).opkey=30) and (excl<>4) then  //4
              obrs.Exchange(i+3,i+j);
         reprog;
         inc(Result);
+        i:=i+1;
       end;
       if aaax=2 then begin
         for j:=0 to 3 do
-           if (Tobrs(obrs[i+j]).side=2) and (Tobrs(obrs[i+j]).opkey=30) then              //3
+           if (Tobrs(obrs[i+j]).side=2) and (Tobrs(obrs[i+j]).opkey=30) and (Tobrs(obrs[i]).opkey=30)   and (excl<>2) then  //3
              obrs.Exchange(i,i+j);
         for j:=0 to 3 do
-           if (Tobrs(obrs[i+j]).side=4) and (Tobrs(obrs[i+j]).opkey=30) then              //1
+           if (Tobrs(obrs[i+j]).side=4) and (Tobrs(obrs[i+j]).opkey=30) and (Tobrs(obrs[i+1]).opkey=30) and (excl<>4) then  //1
              obrs.Exchange(i+1,i+j);
         for j:=0 to 3 do
-           if (Tobrs(obrs[i+j]).side=3) and (Tobrs(obrs[i+j]).opkey=30) then              //2
+           if (Tobrs(obrs[i+j]).side=3) and (Tobrs(obrs[i+j]).opkey=30) and (Tobrs(obrs[i+2]).opkey=30) and (excl<>3) then  //2
              obrs.Exchange(i+2,i+j);
         for j:=0 to 3 do
-           if (Tobrs(obrs[i+j]).side=1) and (Tobrs(obrs[i+j]).opkey=30) then              //4
+           if (Tobrs(obrs[i+j]).side=1) and (Tobrs(obrs[i+j]).opkey=30) and (Tobrs(obrs[i+3]).opkey=30) and (excl<>1) then  //4
              obrs.Exchange(i+3,i+j);
         reprog;
         inc(Result);
+        i:=i+1;
       end;
     end;
 
@@ -769,7 +782,7 @@ begin
         repeat
           if pos('BT',s)=1 then begin  //мы нашли номер программы
             prog:=TProgs.Create;       //создаём объект программы
-            prog.sorted:=false;        //операции программы не отсортированы 
+            prog.sorted:=false;        //операции программы не отсортированы
             prog.data:=TStringList.Create; //создаём список текста программы
             s1:=s;      //теперь работаем с s1
             oprt:=0;    //список операций = 0
@@ -1600,6 +1613,172 @@ begin
 end;
 
 
+procedure TBtl.load(filename:TFileName);
+var f:textfile;
+    s,s1,s2,s3:string;
+    prog:TProgs;
+    oprt,i:integer;
+    obr:Tobrs;
+    eop:boolean;
+begin
+  if filename<>''  then begin
+    assignfile(f,filename);
+    reset(f);
+    readln(f,s);
+    if ((pos('VN',s)=1) and (pos('BTL V5.0',s)<>0))// or (pos('BTL V1.0',s)<>0)
+     then begin
+      //header:=TStringList.Create;
+      //заполняем заголовок до тех пор, пока не найдена первая программа
+      repeat
+        //header.Add(s);
+        readln(f,s);
+      until (pos('BT',s)=1) or eof(f);
+      eop:=false;
+      //если первая программа найдена создаём список программ
+      //подтверждаем полное удаление объекта из памяти
+      //if pos('BT',s)=1 then progs:=TObjectList.Create(true);
+      while not eof(f) do begin  //читаем файл полностью
+        //читаем пока не нашли новую программу или файл не кончился
+        repeat
+          if pos('BT',s)=1 then begin  //мы нашли номер программы
+            prog:=TProgs.Create;       //создаём объект программы
+            prog.sorted:=false;        //операции программы не отсортированы
+            prog.data:=TStringList.Create; //создаём список текста программы
+            s1:=s;      //теперь работаем с s1
+            oprt:=0;    //список операций = 0
+            delete(s1,1,3);
+            if assigned(progs) then
+              prog.idf:=progs.Count+1
+            else prog.idf:=strtoint(s1);    //номер закидываем в объект программы
+            eop:=false;
+          end;
+          if pos('BN',s)=1 then begin //мы нашли строчку комментария программы
+            s1:=s;
+            delete(s1,1,3);
+            if assigned(prog) then    //если программа создана
+               prog.comment:=s1;      //кидаем в комментарий
+          end;
+          if pos('BP',s)=1 then begin //если строка с данными программы
+            s1:=s;
+            if pos('A:',s1)<>0 then begin  //ищем в строке количество проходов
+              delete(s1,1,pos('A:',s1)+1);
+              delete(s1,pos(' ',s1),length(s1)-pos(' ',s1)+1); //выделяем число
+              if assigned(prog) then
+                  prog.col:=strtoint(s1);  //число проходов
+            end;
+            s1:=s;                         //восстанавливаем строку
+            if pos('P01',s1)<>0 then begin //ищем длинну
+              delete(s1,1,pos('P01',s1)+3);
+              delete(s1,pos(' ',s1),length(s1)-pos(' ',s1)+1);
+              if assigned(prog) then
+                  prog.long:=strtoint(s1);
+            end;
+            s1:=s;
+            if pos('P02',s1)<>0 then begin  //ищем высоту бруса
+              delete(s1,1,pos('P02',s1)+3);
+              delete(s1,pos(' ',s1),length(s1)-pos(' ',s1)+1);
+              if assigned(prog) then
+                  prog.h:=strtoint(s1);
+            end;
+            s1:=s;
+            if pos('P03',s1)<>0 then begin  //ищем ширину бруса
+              delete(s1,1,pos('P03',s1)+3);
+              delete(s1,pos(' ',s1),length(s1)-pos(' ',s1)+1);
+              if assigned(prog) then
+                  prog.sh:=strtoint(s1);
+            end;
+            s1:=s;
+            if pos('P09',s1)<>0 then begin  //ищем номер производства
+              delete(s1,1,pos('P09',s1)+3);
+              delete(s1,pos(' ',s1),length(s1)-pos(' ',s1)+1);
+              if assigned(prog) then
+                  prog.idprv:=strtoint(s1);
+            end;
+          end;   //строка с данными распарсена
+          //найдена операция
+          if pos('KS',s)=1 then begin
+            //если это первая операция в программе создаём список операций
+            if oprt=0 then prog.obrs:=TObjectList.Create;
+            oprt:=oprt+1;
+            eop:=true; //найдена операция
+            //создаём текущую операцию
+            obr:=TObrs.Create;
+            obr.data:=TStringList.Create;
+            s1:=s;
+            delete(s1,1,3);
+            s1:=copy(s1,1,pos('-',s1)-1);
+            obr.opgr:=strtoint(s1);
+            s1:=s;
+            delete(s1,1,pos('-',s1));
+            s1:=copy(s1,1,pos('-',s1)-1);
+            obr.opkey:=strtoint(s1);
+            s1:=s;
+            delete(s1,1,5);
+            s1:=copy(s1,pos('-',s1)+1,1);
+            obr.side:=strtoint(s1);
+            obr.data.Add(s);
+            //инициализация массива параметров с помощью отриц.чисел - пустое значение
+            for i:=1 to 21 do obr.p[i]:=-1;
+          end;
+          if pos('KP',s)=1 then begin
+            if oprt<>0 then begin
+              s1:=s;
+              delete(s1,1,3);
+              repeat
+                s2:=copy(s1,2,2); //индекс массива - он же номер параметра
+                delete(s1,1,4);
+                //значение параметра
+                if length(s1)>8 then s3:=copy(s1,1,pos(' ',s1)-1)
+                  else s3:=s1;
+                if length(s1)>8 then delete(s1,1,pos(' ',s1)) else s1:='';
+                //добавляем параметр в массив
+                if pos('-',s3)<>0 then begin
+                  delete(s3,pos('-',s3),1);
+                  obr.p[21]:=strtoint(s2);
+                end;
+                obr.p[strtoint(s2)]:=strtoint(s3);
+              until s1='';
+              obr.data.Add(s);
+            end;
+          end;
+          if pos('KF',s)=1 then begin
+            if oprt<>0 then begin
+              obr.data.Add(s);
+            end;
+          end;
+          //добавление операции в  программу
+          if (pos('KF FR',s)=1) and (oprt<>0) and assigned(prog.obrs) then begin
+            prog.obrs.Add(obr);
+            eop:=false; //операция добавлена
+          end;
+          //добавляем текущую прочитанную строку в блок данных
+          if assigned(prog) then
+                prog.data.Add(s);
+          readln(f,s); //читаем новую строку
+          //последняя строка данных
+          if eof(f) then begin
+            //добавим её к данным программы
+            if assigned(prog) then prog.data.Add(s);
+            //если в этой строке конец операции добавляем и операцию
+            if (pos('KF',s)=1) and (oprt<>0) and assigned(prog.obrs) then
+              prog.obrs.Add(obr);
+          end;
+          //если мы нашли новую программу или новую операцию, а старую не добавили
+          if ((pos('BT',s)=1) or (pos('KS',s)=1)) and eop and assigned(prog.obrs) then begin
+            prog.obrs.Add(obr);
+            eop:=false;
+          end;
+        //если в прочитанной строке новая программа или конец файла в верхний цикл
+        until (pos('BT',s)=1) or eof(f);
+        //если есть список кидаем туда программу
+        if assigned(progs) then
+             progs.Add(prog);
+      end;
+    end else showmessage('Это не BTL-файл версии 5.0');
+    closefile(f); //файл кончился, закрываем его
+  end;
+end;
+
 /////////////////интерфейсня часть///////////////////////////
 /////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////
@@ -2013,6 +2192,17 @@ begin
       for i:=0 to ListView2.Items.Count-1 do
         ListView2.Items[i].Checked:=false;
   end;
+end;
+
+procedure TForm1.N29Click(Sender: TObject);
+begin
+  if OpenDialog1.Execute then if assigned(Btl) then begin
+    Btl.load(OpenDialog1.FileName);
+    if assigned(Btl.progs) then begin
+      Label2.Caption:=inttostr(Btl.progs.Count);
+      listprog;
+    end;  
+  end;    
 end;
 
 end.

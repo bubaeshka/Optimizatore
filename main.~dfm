@@ -386,6 +386,10 @@ object Form1: TForm1
         Caption = #1055#1086#1089#1084#1086#1090#1088#1077#1090#1100' '#1087#1088#1086#1075#1088#1072#1084#1084#1091
         OnClick = N5Click
       end
+      object N29: TMenuItem
+        Caption = #1057#1083#1080#1103#1085#1080#1077' '#1092#1072#1081#1083#1086#1074
+        OnClick = N29Click
+      end
     end
     object N13: TMenuItem
       Caption = #1057#1087#1088#1072#1074#1082#1072
