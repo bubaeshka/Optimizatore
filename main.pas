@@ -585,9 +585,11 @@ var i,j:integer;
 begin
   temps:=TStringList.Create;
   for i:=0 to data.Count-1 do
-    if pos('KS',data.Strings[i])<>1 then
-      temps.Add(data.Strings[i])
-    else break;
+    if pos('KS',data.Strings[i])<>1 then begin
+      if pos('BT',data.Strings[i])=1 then temps.Add('BT '+inttostr(idf)) else
+        if pos('BN',data.Strings[i])=1 then temps.Add('BN '+comment) else
+          temps.Add(data.Strings[i])
+    end else break;
   for i:=0 to obrs.Count-1 do
     for j:=0 to Tobrs(obrs[i]).data.Count-1 do
       temps.Add(Tobrs(obrs[i]).data.Strings[j]);
