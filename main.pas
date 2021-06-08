@@ -1615,14 +1615,15 @@ end;
 
 procedure TBtl.load(filename:TFileName);
 var f:textfile;
-    s,s1,s2,s3:string;
+    s,s1,s2,s3,s4,s5:string;
     prog:TProgs;
-    oprt,i:integer;
+    oprt,i,oldzg,newzg:integer;
     obr:Tobrs;
     eop:boolean;
 begin
   if filename<>''  then begin
     assignfile(f,filename);
+    oldzg:=0; newzg:=0;
     reset(f);
     readln(f,s);
     if ((pos('VN',s)=1) and (pos('BTL V5.0',s)<>0))// or (pos('BTL V1.0',s)<>0)
@@ -1771,8 +1772,22 @@ begin
         //если в прочитанной строке новая программа или конец файла в верхний цикл
         until (pos('BT',s)=1) or eof(f);
         //если есть список кидаем туда программу
-        if assigned(progs) then
+        if assigned(progs) then begin
+             if oldzg=0 then begin
+               s5:=TProgs(progs[progs.Count-1]).comment;
+               s4:=copy(s5,1,pos('_',s5)-1);
+               if not trystrtoint(s4,oldzg) then oldzg:=-1;
+             end;
+             if oldzg>0 then begin
+               s4:=copy(prog.comment,1,pos('_',prog.comment)-1);
+               if not trystrtoint(s4,newzg) then newzg:=-1;
+               if newzg>0 then begin
+                 delete(prog.comment,1,pos('_',prog.comment)-1);
+                 prog.comment:=inttostr(oldzg+newzg)+prog.comment;
+               end;
+             end;
              progs.Add(prog);
+        end;
       end;
     end else showmessage('Это не BTL-файл версии 5.0');
     closefile(f); //файл кончился, закрываем его
