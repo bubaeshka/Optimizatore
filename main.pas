@@ -1784,6 +1784,7 @@ begin
                if newzg>0 then begin
                  delete(prog.comment,1,pos('_',prog.comment)-1);
                  prog.comment:=inttostr(oldzg+newzg)+prog.comment;
+                 prog.reprog;
                end;
              end;
              progs.Add(prog);

@@ -1781,7 +1781,7 @@ begin
              if oldzg>0 then begin
                s4:=copy(prog.comment,1,pos('_',prog.comment)-1);
                if not trystrtoint(s4,newzg) then newzg:=-1;
-               if newzg>0 then begin        //rel el
+               if newzg>0 then begin
                  delete(prog.comment,1,pos('_',prog.comment)-1);
                  prog.comment:=inttostr(oldzg+newzg)+prog.comment;
                end;
