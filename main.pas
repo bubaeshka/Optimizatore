@@ -60,6 +60,8 @@ type
     N28: TMenuItem;
     CheckBox1: TCheckBox;
     N29: TMenuItem;
+    N30: TMenuItem;
+    SaveDialog2: TSaveDialog;
     procedure N3Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure N2Click(Sender: TObject);
@@ -100,6 +102,7 @@ type
     procedure N28Click(Sender: TObject);
     procedure CheckBox1Click(Sender: TObject);
     procedure N29Click(Sender: TObject);
+    procedure N30Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -1866,6 +1869,7 @@ begin
        // N8.Enabled:=false;
        CadWork1.Enabled:=true;
        //Button3.Enabled:=false;
+       Form1.Caption:=Form1.Caption+' / '+OpenDialog1.FileName;
      end;
    end else begin
      Label2.Caption:='0';
@@ -2221,6 +2225,20 @@ begin
       listprog;
     end;  
   end;    
+end;
+
+procedure TForm1.N30Click(Sender: TObject);
+var fff:textfile;
+    i:integer;
+begin
+  if SaveDialog2.Execute then begin
+    if (SaveDialog2.FileName<>'') and assigned(Btl) and assigned(Btl.progs) and (Btl.progs.Count>0) then begin
+      assignfile(fff,SaveDialog2.FileName);
+      rewrite(fff);
+      for i:=0 to Btl.progs.Count-1 do writeln(fff,TProgs(Btl.progs[i]).comment);
+      closefile(fff);
+    end;
+  end;
 end;
 
 end.

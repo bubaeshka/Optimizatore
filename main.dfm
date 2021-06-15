@@ -3,7 +3,7 @@ object Form1: TForm1
   Top = 127
   Width = 926
   Height = 660
-  Caption = ' '
+  Caption = 'Optimizatore 1.3.1'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -390,6 +390,10 @@ object Form1: TForm1
         Caption = #1057#1083#1080#1103#1085#1080#1077' '#1092#1072#1081#1083#1086#1074
         OnClick = N29Click
       end
+      object N30: TMenuItem
+        Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1085#1086#1084#1077#1088#1072' '#1089#1073#1086#1088#1082#1080
+        OnClick = N30Click
+      end
     end
     object N13: TMenuItem
       Caption = #1057#1087#1088#1072#1074#1082#1072
@@ -411,6 +415,11 @@ object Form1: TForm1
     DefaultExt = 'btl'
     Filter = 'BTL '#1074#1077#1088#1089#1080#1103' 5.0|btl'
     Left = 728
+    Top = 568
+  end
+  object SaveDialog2: TSaveDialog
+    DefaultExt = 'txt'
+    Left = 856
     Top = 568
   end
 end
